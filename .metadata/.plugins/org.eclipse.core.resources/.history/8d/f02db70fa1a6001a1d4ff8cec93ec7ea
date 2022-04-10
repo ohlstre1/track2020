@@ -1,0 +1,17 @@
+package peakFinder
+
+package tests
+
+import org.junit.Test._
+
+
+class unitest {
+  
+  
+    @Test def test1(){
+      assertEquals("failure on Array(1,2,1)", 1,solveLog(Array(1,2,1)))
+      
+    }
+  
+  
+}

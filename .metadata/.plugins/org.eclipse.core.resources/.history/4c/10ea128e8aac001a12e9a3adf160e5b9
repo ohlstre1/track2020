@@ -1,0 +1,24 @@
+/* Author: Tommi Junttila, Aalto University.
+ * Only for the use on the Aalto course CS-A1140.
+ * Redistribution not allowed.
+ */
+
+package object radixSort {
+  /**
+   * Least-significant-digit-first radix sort for integer arrays.
+   * Sorts the argument array in ascending order.
+   * In the basic version (for 80 percent of the points),
+   * you may assumes that all the integers are non-negative.
+   * Interpret 'digit' as 'byte' (8 bits) here and
+   * use bit-level operations such as
+   * shifting (>> and <<) and masking (&) to extract 'digits'.
+   */
+  def lsdfRadixSort(a: Array[Int]): Unit = {
+    val N = a.length
+    if(N <= 1) return
+    val arr = Array(N) 
+    var i,j,temp = 0
+    
+    while(i<
+  }
+}

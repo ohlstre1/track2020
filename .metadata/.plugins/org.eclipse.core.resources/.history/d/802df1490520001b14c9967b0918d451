@@ -1,0 +1,22 @@
+/* Author: Tommi Junttila, Aalto University.
+ * Only for the use on the Aalto course CS-A1140.
+ * Redistribution not allowed.
+ */
+
+package maze
+
+object generator {
+  import Maze.Direction._
+
+  /**
+   * Generate a (pseudo-random) maze of given dimensions.
+   * The maze must not have any cycles and all the cells must be reachable
+   * from the entry cell at (0,0).
+   */
+  def generate(rows: Int, columns: Int, seed: Int = System.nanoTime.toInt): Maze = {
+    val rand = new scala.util.Random(seed)
+    val maze = new Maze(rows, columns)
+    ???
+    maze
+  }
+}

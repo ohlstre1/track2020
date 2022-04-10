@@ -1,0 +1,77 @@
+/* Author: Tommi Junttila, Aalto University.
+ * Only for the use on the Aalto course CS-A1140.
+ * Redistribution not allowed.
+ */
+
+package escape
+
+object solver {
+  /**
+   * Find a shortest-duration way from the world.startPosition to
+   * a safe position in the world and return the path in form of
+   * a sequence of (row,column) coordinates.
+   * You can use the World.neighbours method for finding the valid
+   * neighbour coordinates of a coordinate.
+   */
+  def solve(world: World): Seq[(Int, Int)] = {
+    val seen = Array.fill[Boolean](world.nofRows, world.nofColumns)(false)
+    val q = scala.collection.mutable.PriorityQueue[((Int, Int), Int)]()(Ordering.by(-_._2))
+    var pred = scala.collection.mutable.HashMap[(Int, Int), (Int, Int)]()
+    var dur = Array.fill[Int](world.nofRows, world.nofColumns)(Integer.MAX_VALUE)
+    var seq = Seq[(Int, Int)]()
+ 
+    q.enqueue((world.startPosition, 0))
+    dur(world.startPosition._1)(world.startPosition._2) = 0
+    var stop = false
+    var u = q.dequeue
+      //ignore if seen
+      if(!seen(u._1._1)(u._1._2)){
+        //stop loop if safe found
+        if(world.apply(u._1).duration == 0 && u._1 != world.startPosition){
+          seq = seq.+:(u._1)
+          stop = true
+        //else continue
+        }else{
+          seen(u._1._1)(u._1._2) = true 
+          for(n <- world.neighbours(u._1)){
+            //if u finds faster way to some neighbour update as better alternative and add to queue
+            if(dur(n._1)(n._2) > dur(u._1._1)(u._1._2) + world.apply(n).duration){
+              dur(n._1)(n._2) = dur(u._1._1)(u._1._2) + world.apply(n).duration
+              pred(n) = u._1
+              q.enqueue((n, dur(n._1)(n._2)))
+            }
+          }
+        }
+      }
+   
+    while(!stop){
+      u = q.dequeue
+      //ignore if seen
+      if(!seen(u._1._1)(u._1._2)){
+        //stop loop if safe found
+        if(world.apply(u._1).duration == 0 && u._1 != world.startPosition){
+          seq = seq.+:(u._1)
+          stop = true
+        //else continue
+        }else{
+          seen(u._1._1)(u._1._2) = true 
+          for(n <- world.neighbours(u._1)){
+            //if u finds faster way to some neighbour update as better alternative and add to queue
+            if(dur(n._1)(n._2) > dur(u._1._1)(u._1._2) + world.apply(n).duration){
+              dur(n._1)(n._2) = dur(u._1._1)(u._1._2) + world.apply(n).duration
+              pred(n) = u._1
+              q.enqueue((n, dur(n._1)(n._2)))
+            }
+          }
+        }
+      }
+    }
+ 
+    while(world.startPosition != seq.head){
+      seq = seq.+:pred(seq.head)
+    }
+ 
+    seq
+  }
+
+}

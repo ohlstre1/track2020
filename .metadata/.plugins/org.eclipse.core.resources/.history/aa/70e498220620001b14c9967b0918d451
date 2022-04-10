@@ -1,0 +1,88 @@
+/* Author: Tommi Junttila, Aalto University.
+ * Only for the use on the Aalto course CS-A1140.
+ * Redistribution not allowed.
+ */
+
+package maze
+
+object generator {
+  import Maze.Direction._
+  import scala.collection.mutable.Buffer
+
+  /**
+   * Generate a (pseudo-random) maze of given dimensions.
+   * The maze must not have any cycles and all the cells must be reachable
+   * from the entry cell at (0,0).
+   */
+  def generate(rows: Int, columns: Int, seed: Int = System.nanoTime.toInt): Maze = {
+    val rand = new scala.util.Random(seed)
+    val maze = new Maze(rows, columns)
+    val stack = scala.collection.mutable.Stack[(Int, Int)]()
+    val visited = scala.collection.mutable.HashSet[(Int, Int)]()
+    
+    
+    // Helper method for getting the neighbors of a cell at a specific location.
+    
+    def nbrDirs(cell : (Int, Int)) : Buffer[Direction] = {
+      val dir = Buffer[Direction]()
+      if(cell._1 + 1 < rows) {
+        dir += Up}
+      
+      if(cell._1 - 1 >= 0) {
+        dir += Down
+      }
+      }
+      if(cell._2 - 1 >= 0) {
+        dir += Left
+      }
+      if(cell._2 + 1 < columns) {
+        dir += Right
+      }
+      dir
+    }
+    
+    // Helper method for getting the cell next to a specified cell in a certain direction.
+    
+    def nbrInDir(cell : (Int, Int), dir : Direction) : (Int, Int) = {
+      dir match {
+        case Left  => (cell._1, cell._2 - 1)
+        case Right => (cell._1, cell._2 + 1)
+        case Down  => (cell._1 - 1, cell._2)
+        case Up    => (cell._1 + 1, cell._2)
+      }
+    }
+    
+    // Start at a random cell in the maze, push it to the stack.
+    stack.push((rand.nextInt(rows), rand.nextInt(columns)))
+    while(stack.nonEmpty) {
+      val current = stack.head
+      // If the current cell is not yet visited, visit it.
+      if(!visited(current)) visited += current
+      
+      // Get a buffer with the currently available directions and shuffle them in a random order.
+      var rndDirs = rand.shuffle(nbrDirs(current))
+      var gotDir = false
+      
+      /* Inner while loop for getting the next cell.
+       * The while loop goes through the current cell's neighbours until it finds one that isn't yet visited or the
+       * rndDirs buffer is empty.
+       */
+      while(!gotDir && rndDirs.nonEmpty) {
+        if(!visited.contains(nbrInDir(current, rndDirs.head))) {
+          // We found an unvisited neighbor. We push it to the stack and flag gotNext to true.
+          gotDir = true
+          maze.breakWall(current._1, current._2, rndDirs.head)
+          stack.push(nbrInDir(current, rndDirs.head))
+        } else {
+          rndDirs = rndDirs.tail
+        }
+      }
+      /* If the while loop went through all directions and didn't find any unvisited neighbors we back up one step.
+       * We do this by popping the stack.
+       */
+      
+      if(!gotDir) stack.pop
+    }
+    maze
+  }
+}

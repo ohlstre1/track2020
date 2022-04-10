@@ -1,0 +1,7 @@
+#org-eclipse-ui-splash-progressText {
+  color: #C8D5EA;
+}
+
+#org-eclipse-ui-splash-progressPart {
+  background-image: url('me-custom:/platform:/plugin/org.scala-ide.sdk/splash.bmp');
+}

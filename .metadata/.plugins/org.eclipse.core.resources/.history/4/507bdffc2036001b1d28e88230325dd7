@@ -1,0 +1,85 @@
+/* Author: Tommi Junttila, Aalto University.
+ * Only for the use on the Aalto course CS-A1140.
+ * Redistribution not allowed.
+ */
+
+package object radixSort {
+  /**
+   * Least-significant-digit-first radix sort for integer arrays.
+   * Sorts the argument array in ascending order.
+   * In the basic version (for 80 percent of the points),
+   * you may assumes that all the integers are non-negative.
+   * Interpret 'digit' as 'byte' (8 bits) here and
+   * use bit-level operations such as
+   * shifting (>> and <<) and masking (&) to extract 'digits'.
+   */
+  
+  def countingSort(a: Array[Int], iterationNum: Int):Array[Int] = {
+    val arr = new Array[Int](a.length)
+    val count = new Array[Int](256)
+    val length = a.length
+    var i = 0
+    val max = arr.max
+    while( i < length){
+      val element = a(i)>>(8*iterationNum) & 0xff
+      count(element)+= 1 //räknar hur många gågnger en nummmer uppenbarar i intervallet 0-255
+      i+=1
+    } 
+
+    
+    val tempArr = new Array[Int](256)
+    var j = 1
+    while( j < 256){ 
+      tempArr(j) = tempArr(j-1) + count(j-1) // Kumulativa platsen för nummror
+      j += 1
+    }
+    
+    i = 0
+    var retu = new Array[Int](a.length)
+    while(i < length){
+      //j = (a(i)>>(8*iterationNum) ) & 0xff
+      retu(tempArr((a(i)>>(8*iterationNum) ) & 0xff)) = a(i) 
+      tempArr((a(i)>>(8*iterationNum) ) & 0xff) += 1
+      i+=1
+    }
+    if(iterationNum<4){
+         countingSort(retu, iterationNum +1)
+    }else return retu
+   
+  }
+  
+  def lsdfRadixSort(arr: Array[Int]): Unit = {
+    val length = arr.length
+    if(length <= 1) return
+    
+    def inner(A :Array[Int], shift_counter:Int) : Array[Int] = {
+      val count = new Array[Int](256)
+      var count_i = 0
+      while(count_i < length) {
+        val index = (A(count_i) >> shift_counter * 8) & 0xff
+        count_i += 1
+        count(index) += 1
+      }
+      count_i = 0
+      var count_j = 1
+      
+      val temp_arr = new Array[Int](256)
+      
+    }
+    
+    
+    
+    val sorted = countingSort(a,0)
+    
+    var i = 0
+    while( i< a.length){
+      a(i) = sorted(i)
+      i+=1
+    }
+      
+      
+  }
+  
+ 
+    
+}
